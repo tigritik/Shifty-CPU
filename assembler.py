@@ -1,7 +1,3 @@
-test = '''LDR a b c
-STR a d b
-ADD b a d'''
-
 symbols = {
     "ldr" : "00",
     "str" : "01",
@@ -32,7 +28,7 @@ def assemble(file_name):
                 use_reg3 = True
 
             if use_reg3:
-                out += (symbols[cmd] + symbols[r1] + symbols[r2] + symbols[r3] + '1' + '0'*7)
+                out += (symbols[cmd] + symbols[r1] + symbols[r2] + symbols[arg3] + '1' + '0'*7)
             else:
                 immediate_size = 7
                 if arg3 < 0:
@@ -51,4 +47,4 @@ def binary_to_hex(bin_str):
     for i in range(0, len(bin_str), instruction_bit_length):
         print(hex(int(bin_str[i:i+instruction_bit_length], base=2)))
         
-binary_to_hex(assemble(""))
+binary_to_hex(assemble("test.txt"))
