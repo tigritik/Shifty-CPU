@@ -16,6 +16,7 @@ def assemble(file_name):
         for instruction in f:
             instruction = instruction.lower()
             cmd, r1, r2, arg3 = instruction.split(' ')
+            arg3 = arg3.strip()
             if cmd == 'mov':
                 cmd = 'add'
                 arg3 = r2
