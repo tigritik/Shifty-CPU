@@ -16,10 +16,6 @@ symbols = {
 def assemble(file_name):
     out = ""
     
-    instructions = test.split('\n')
-    for instruction in instructions:
-        
-    return out
     with open(file_name, mode='r') as f:
         for instruction in f:
             instruction = instruction.lower()
@@ -46,6 +42,8 @@ def assemble(file_name):
                     imm = f"{arg3:0{immediate_size}b}"
                 
                 out += (symbols[cmd] + symbols[r1] + symbols[r2] + '00' + '0' + imm)
+
+    return out
     
 def binary_to_hex(bin_str):
     instruction_byte_length = 2
