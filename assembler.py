@@ -11,36 +11,65 @@ symbols = {
 
 def assemble(file_name):
     out = ""
+    data_out = ""
     
     with open(file_name, mode='r') as f:
-        for instruction in f:
-            instruction = instruction.lower()
-            cmd, r1, r2, arg3 = instruction.split(' ')
-            arg3 = arg3.strip()
-            if cmd == 'mov':
-                cmd = 'add'
-                arg3 = r2
-                r2 = 'd'
-                
-            use_reg3 = False
-            try:
-                arg3 = int(arg3)
-            except:
-                use_reg3 = True
+        text = f.read().split('data\n')
+        data = ""
+        if len(text) > 1:
+            data = text[1]
+        text = text[0]
+        
+    for instruction in text.split('\n'):
+        instruction = instruction.lower()
+        cmd, r1, r2, arg3 = instruction.split(' ')
+        arg3 = arg3.strip()
+        if cmd == 'mov':
+            cmd = 'add'
+            arg3 = r2
+            r2 = 'd'
+            
+        use_reg3 = False
+        try:
+            arg3 = int(arg3)
+        except:
+            use_reg3 = True
 
-            if use_reg3:
-                out += (symbols[cmd] + symbols[r1] + symbols[r2] + symbols[arg3] + '1' + '0'*7)
+        if use_reg3:
+            out += (symbols[cmd] + symbols[r1] + symbols[r2] + symbols[arg3] + '1' + '0'*7)
+        else:
+            immediate_size = 7
+            if arg3 < 0:
+                imm = f"{-1*arg3:0b}"
+                imm = '1'*(immediate_size - len(imm)) + imm
             else:
-                immediate_size = 7
-                if arg3 < 0:
-                    imm = f"{-1*arg3:0b}"
-                    imm = '1'*(immediate_size - len(imm)) + imm
-                else:
-                    imm = f"{arg3:0{immediate_size}b}"
-                
-                out += (symbols[cmd] + symbols[r1] + symbols[r2] + '00' + '0' + imm)
+                imm = f"{arg3:0{immediate_size}b}"
+            
+            out += (symbols[cmd] + symbols[r1] + symbols[r2] + '00' + '0' + imm)
+    
+    for line in data.split('\n'):
+        type, val = data.split(' ')
+        if type.tolower() == 'string':
+            for c in val:
+                data_out += f"{ord(c):08b}"[-8:]
+            data_out += '0'*8
+        else:
+            if type.tolower() == 'char':
+                val = str(ord(val))
+                length = 8
+            else if type.tolower() == 'byte':
+                length = 8
+            else if type.tolower() == 'word':
+                length = 16
+            else if type.tolower() == 'dword':
+                length = 32
+            else if type.tolower() == 'quad':
+                length = 64
+            else:
+                raise ValueError(f"Unknown data type {type}")
+            data_out += f"{int(val):0{length}b}"[-1*length:]
 
-    return out
+    return out, data_out
     
 def binary_to_hex(bin_str):
     instruction_byte_length = 2
@@ -64,4 +93,6 @@ def binary_to_hex(bin_str):
                 current_index += instruction_bit_length
             f.write('\n')
         
-binary_to_hex(assemble("test.txt"))
+text, data = assemble("test.txt")
+binary_to_hex(text)
+print(data)
