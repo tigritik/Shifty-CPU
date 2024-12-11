@@ -108,6 +108,6 @@ def data_to_hex(data_in):
                 current_index += byte
             f.write('\n')
             
-text, data = assemble("test.txt")
+text, data = assemble("sample_program.txt")
 binary_to_hex(text)
 data_to_hex(data)
