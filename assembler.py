@@ -45,7 +45,23 @@ def assemble(file_name):
 def binary_to_hex(bin_str):
     instruction_byte_length = 2
     instruction_bit_length = 8*instruction_byte_length
-    for i in range(0, len(bin_str), instruction_bit_length):
-        print(hex(int(bin_str[i:i+instruction_bit_length], base=2)))
+    with open("a.out", mode='w') as f:
+        f.write("v3.0 hex words addressed\n")
+        bin_str = bin_str.ljust(256*instruction_bit_length, '0')
+
+        hex_digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']
+        current_index = 0
+        for i in range( len(hex_digits) ):
+            f.write(hex_digits[i] + '0:')
+            for j in range(16):
+                current_instruction = bin_str[current_index : current_index + instruction_bit_length]
+                current_instruction = int(current_instruction, base=2)
+                if current_instruction < 0:
+                    current_instruction = ' ' + '1'*(2*instruction_byte_length - len(current_instruction)) + f"{-1*current_instruction:0x}"
+                else:
+                    current_instruction = f" {current_instruction:0{2*instruction_byte_length}x}"
+                f.write(current_instruction)
+                current_index += instruction_bit_length
+            f.write('\n')
         
 binary_to_hex(assemble("test.txt"))
