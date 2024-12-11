@@ -18,7 +18,7 @@ def assemble(file_name):
         data = ""
         if len(text) > 1:
             data = text[1]
-        text = text[0]
+        text = text[0].strip()
         
     for instruction in text.split('\n'):
         instruction = instruction.lower()
@@ -49,21 +49,21 @@ def assemble(file_name):
     
     for line in data.split('\n'):
         type, val = data.split(' ')
-        if type.tolower() == 'string':
+        if type.lower() == 'string':
             for c in val:
                 data_out += f"{ord(c):08b}"[-8:]
             data_out += '0'*8
         else:
-            if type.tolower() == 'char':
+            if type.lower() == 'char':
                 val = str(ord(val))
                 length = 8
-            else if type.tolower() == 'byte':
+            elif type.lower() == 'byte':
                 length = 8
-            else if type.tolower() == 'word':
+            elif type.lower() == 'word':
                 length = 16
-            else if type.tolower() == 'dword':
+            elif type.lower() == 'dword':
                 length = 32
-            else if type.tolower() == 'quad':
+            elif type.lower() == 'quad':
                 length = 64
             else:
                 raise ValueError(f"Unknown data type {type}")
