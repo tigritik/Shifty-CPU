@@ -17,7 +17,7 @@ def assemble(file_name):
         text = f.read().split('data\n')
         data = ""
         if len(text) > 1:
-            data = text[1]
+            data = text[1].strip()
         text = text[0].strip()
         
     for instruction in text.split('\n'):
@@ -48,7 +48,7 @@ def assemble(file_name):
             out += (symbols[cmd] + symbols[r1] + symbols[r2] + '00' + '0' + imm)
     
     for line in data.split('\n'):
-        type, val = data.split(' ')
+        type, val = line.split(' ')
         if type.lower() == 'string':
             for c in val:
                 data_out += f"{ord(c):08b}"[-8:]
