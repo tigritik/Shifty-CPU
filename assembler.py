@@ -85,14 +85,29 @@ def binary_to_hex(bin_str):
             for j in range(16):
                 current_instruction = bin_str[current_index : current_index + instruction_bit_length]
                 current_instruction = int(current_instruction, base=2)
-                if current_instruction < 0:
-                    current_instruction = ' ' + '1'*(2*instruction_byte_length - len(current_instruction)) + f"{-1*current_instruction:0x}"
-                else:
-                    current_instruction = f" {current_instruction:0{2*instruction_byte_length}x}"
+                current_instruction = f" {current_instruction:0{2*instruction_byte_length}x}"
                 f.write(current_instruction)
                 current_index += instruction_bit_length
             f.write('\n')
+
+def data_to_hex(data_in):
+    byte = 8
+    with open("a.data", mode='w') as f:
+        f.write("v3.0 hex words addressed\n")
+        data_in = data_in.ljust(256*byte, '0')
         
+        hex_digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']
+        current_index = 0
+        for i in range( len(hex_digits) ):
+            f.write(hex_digits[i] + '0:')
+            for j in range(byte):
+                current_data = data_in[current_index : current_index + byte]
+                current_data = int(current_data, base=2)
+                current_data = f" {current_data:02x}"
+                f.write(current_data)
+                current_index += byte
+            f.write('\n')
+            
 text, data = assemble("test.txt")
 binary_to_hex(text)
-print(data)
+data_to_hex(data)
